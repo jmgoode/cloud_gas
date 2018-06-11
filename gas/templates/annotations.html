@@ -1,0 +1,51 @@
+<!--
+annotations.html - Display a list of user annotation jobs with links to details for each job
+Copyright (C) 2011-2018 Vas Vasiliadis <vas@uchicago.edu>
+University of Chicago
+-->
+{% extends "base.html" %}
+{% block title %}Annotations{% endblock %}
+{% block body %}
+  {% include "header.html" %}
+  <div class="container">
+    <div class="page-header">
+      <h1>My Annotations</h1>
+    </div>
+
+    <div class="row text-right">
+      <a href="{{ url_for('annotate') }}" title="Request New Annotation">
+        <button type="button" class="btn btn-link" aria-label="Request New Annotation">
+          <i class="fa fa-plus fa-lg"></i> Request New Annotation
+        </button>
+      </a>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% if annotations %}
+          <table>
+            <tr>
+                <th>Job ID</th>
+                <th>Request Time</th>
+                <th>VCF File Name</th>
+                <th>Status</th>
+            </tr>
+          {% for job in annotations %}
+            <!-- Display a list of annotations in a table -->
+            <tr>
+                <td><a href="{{ url_for('annotation_details', id=job.job_id) }}">{{ job.job_id }}</a></td>
+                <!-- <td><a href="https://jgoode.ucmpcs.org:4433/annotations/{{job.job_id}}">{{ job.job_id }}</a></td> -->
+                <td>{{ format(job.submit_time) }}</td>
+                <td>{{ job.input_file_name }}</td>
+                <td>{{ job.job_status }}</td>
+            </tr>
+          {% endfor %}
+          </table>
+
+        {% else %}
+          <p>No annotations found.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div> <!-- container -->
+{% endblock %}

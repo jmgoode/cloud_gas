@@ -1,0 +1,92 @@
+<!--
+annotations.html - Display a list of user annotation jobs with links to details for each job
+Copyright (C) 2011-2018 Vas Vasiliadis <vas@uchicago.edu>
+University of Chicago
+-->
+{% extends "base.html" %}
+{% block title %}Annotations{% endblock %}
+{% block body %}
+  {% include "header.html" %}
+  <div class="container">
+    <div class="page-header">
+      <h1>Annotation Details</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <!-- If the job is complete -->
+        {% if item.job_status == 'COMPLETE' %}
+          <!-- If it's a premium user, show the link to download -->
+          {% if item.role == 'premium_user' %}
+            <!-- If archive_status == restored or archive_status == NA (never archived), show link to download -->
+            {% if item.archive_status == 'N/A' or item.archive_status == 'RESTORED' %}
+              <b>Request ID: </b>{{item.job_id}}<br />
+              <b>Request Time: </b>{{request}}<br />
+              <b>VCF Input File: </b>{{item.input_file_name}}<br />
+              <b>Status: </b>{{item.job_status}}<br />
+              <b>Complete Time: </b>{{complete}}<br />
+              <hr />
+              <b>Annotated Results File: </b><a href="{{ presigned_url }}" download>Download</a><br />
+              <b>Annotation Log File: </b><a href="{{ url_for('annotation_log', id=item.job_id)}}">View log</a><br />
+            <!-- If archive_status == restoring show note that says download link will be available when archives are retrieved -->
+            {% else %}
+              <b>Request ID: </b>{{item.job_id}}<br />
+              <b>Request Time: </b>{{request}}<br />
+              <b>VCF Input File: </b>{{item.input_file_name}}<br />
+              <b>Status: </b>{{item.job_status}}<br />
+              <b>Complete Time: </b>{{complete}}<br />
+              <hr />
+              <b>Annotated Results File: </b>Your results are being restored from our archives, please check back later<br />
+              <b>Annotation Log File: </b><a href="{{ url_for('annotation_log', id=item.job_id)}}">View log</a><br />
+            {% endif %}
+
+          <!-- If it's a free user and their time has yet to expire, show the link to download results and TTL -->
+          {% elif item.role == 'free_user' and is_free_view_expired(complete,now) == False %}
+            <b>Request ID: </b>{{item.job_id}}<br />
+            <b>Request Time: </b>{{request}}<br />
+            <b>VCF Input File: </b>{{item.input_file_name}}<br />
+            <b>Status: </b>{{item.job_status}}<br />
+            <b>Complete Time: </b>{{complete}}<br />
+            <hr />
+            <p>Your free download expires at <b>{{expiration_time(complete)}}</b></p>
+            <p>If you would like to download results beyond 30 minutes, <a href="{{ url_for('subscribe') }}">upgrade to Premium</a></p>
+            <b>Annotated Results File: </b><a href="{{ presigned_url }}" download>Download</a><br />
+            <b>Annotation Log File: </b><a href="{{ url_for('annotation_log', id=item.job_id)}}">View log</a><br />
+
+          <!-- Otherwise, it must be a free user who's time is up, so show link to subscribe to premium -->
+          {% else %}
+            <b>Request ID: </b>{{item.job_id}}<br />
+            <b>Request Time: </b>{{request}}<br />
+            <b>VCF Input File: </b>{{item.input_file_name}}<br />
+            <b>Status: </b>{{item.job_status}}<br />
+            <b>Complete Time: </b>{{complete}}<br />
+            <hr />
+            <p>Your free download period has expired!</p>
+            <b>Annotated Results File: </b><a href="{{ url_for('subscribe') }}">upgrade to Premium for Download</a><br />
+            <b>Annotation Log File: </b><a href="{{ url_for('annotation_log', id=item.job_id)}}">View log</a><br />
+
+          {% endif %}
+
+        <!-- If the job status is running or pending, do not display link to results files-->
+        {% elif item.job_status == 'PENDING' or item.job_status == 'RUNNING'%}
+          <b>Request ID: </b>{{item.job_id}}<br />
+          <b>Request Time: </b>{{request}}<br />
+          <b>VCF Input File: </b>{{item.input_file_name}}<br />
+          <b>Status: </b>{{item.job_status}}<br />
+
+        {% else %}
+          <p>Sorry, no item matches the job ID.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row text-left">
+      <a href="{{ url_for('annotations_list') }}" title="Back to Annotations List">
+        <button type="button" class="btn btn-lg" aria-label="Back to Annotations List">
+          <i class="fa fa-arrow-left"></i> Back to Annotations List
+        </button>
+      </a>
+    </div>
+
+  </div> <!-- container -->
+{% endblock %}

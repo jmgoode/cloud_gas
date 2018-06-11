@@ -1,0 +1,8 @@
+#!/bin/bash -ex
+cd /home/ubuntu
+source /home/ubuntu/.virtualenvs/mpcs/bin/activate
+aws s3 cp s3://mpcs-students/jgoode/cp-jmgoode.zip cp-jmgoode.zip
+unzip cp-jmgoode.zip
+chown -R ubuntu:ubuntu /home/ubuntu/cp-jmgoode
+cd /home/ubuntu/cp-jmgoode
+sudo -u ubuntu /home/ubuntu/cp-jmgoode/run_ann.sh &

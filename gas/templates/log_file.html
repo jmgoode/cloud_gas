@@ -1,0 +1,34 @@
+<!--
+annotations.html - Display a list of user annotation jobs with links to details for each job
+Copyright (C) 2011-2018 Vas Vasiliadis <vas@uchicago.edu>
+University of Chicago
+-->
+{% extends "base.html" %}
+{% block title %}Annotations{% endblock %}
+{% block body %}
+  {% include "header.html" %}
+  <div class="container">
+    <div class="page-header">
+      <h1>Log File</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        {% if log_file %}
+          <p>{{ log_file }}</p><br />
+        {% else %}
+          <p>Sorry, there is no log file for this job.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row text-left">
+    <a href="{{ url_for('annotation_details', id=item.job_id) }}" title="Back to Annotation">
+        <button type="button" class="btn btn-lg" aria-label="Back to Annotation">
+          <i class="fa fa-arrow-left"></i> Back to Annotation
+        </button>
+      </a>
+    </div>
+
+  </div> <!-- container -->
+{% endblock %}
