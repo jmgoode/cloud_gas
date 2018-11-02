@@ -253,8 +253,8 @@ def annotation_details(id):
 
     #if it doesnt exist, display a none item
     except:
-       item = None
-       return render_template('annotation_detail.html', item=item) #, presigned_url=url, request=request, complete=complete)
+        item = None
+        return render_template('annotation_detail.html', item=item) #, presigned_url=url, request=request, complete=complete)
 
 
 
@@ -331,7 +331,7 @@ def subscribe():
         customer = stripe.Customer.create(
             description=description,
             email=email,
-            source=token 
+            source=token
         )
 
         #pass stripe_id
